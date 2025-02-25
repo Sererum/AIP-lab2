@@ -16,6 +16,7 @@
 
 
 #include "libs.h" 
+#include "my_string/my_string.h"
 
 int main() {
 
@@ -32,9 +33,13 @@ int main() {
      * Выведите элементы массива на консоль.
      */
 
-    /* {
-        MyString ar[3] = { ... };
-    } */
+    {
+		int size = 5;
+        MyString ar[size] = {MyString("Hello"), MyString("World"), MyString("!")};
+
+		for (int i = 0; i < size; ++i)
+			ar[i].print();
+    }
 
     /**
      * Замените размер массива с 3 на 5, не меняя список инициализаторов.
@@ -78,7 +83,7 @@ int main() {
      * - size_t read_raw(void *buf, size_t max_bytes) - читает доступные данные
      *   в буфер, но не более указанного количества и возвращает количество
      *   байт, которое удалось считать;
-     * - long tell() - возвращает текущий сдвиг файла (см. функцию ftell);
+      - long tell() - возвращает текущий сдвиг файла (см. функцию ftell);
      * - bool seek(long offset) - устанавливает сдвиг файла (см. функцию fseek)
      *   и возвращает true, если операция успешна.
      *
