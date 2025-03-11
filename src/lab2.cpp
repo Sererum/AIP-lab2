@@ -16,6 +16,7 @@
 
 #include "libs.h"
 #include "base/base_file.h"
+#include "base32/base_32_file.h"
 #include "my_string/my_string.h"
 
 int main() {
@@ -180,6 +181,31 @@ int main() {
      * кодировки, по умолчанию используется таблица "A..Z1..6".
      */
 
+	{
+		std::cout << "------ Задание 2.2.1 ------" << std::endl; 
+
+		// const char* source = "Hello, world! My name is Nastya";
+		const char* source = "1";
+		const char *file_name = "build/temp32.txt";
+
+		Base32File write_file(file_name, "w");
+		char buffer[256];
+
+		int len_source = strlen(source);
+		strcpy(buffer, source);
+
+		write_file.write(buffer, len_source);
+		write_file.close();
+
+		std::cout << "Write in file text: " << source << std::endl;
+
+		Base32File read_file(file_name, "r");
+		char buffer2[256];
+
+		read_file.read(buffer2, len_source);
+		std::cout << "Readed text: " <<  buffer2 << std::endl; 
+	}
+	
     /**
      * Задание 2.2.2. RLE-сжатие.
      *
