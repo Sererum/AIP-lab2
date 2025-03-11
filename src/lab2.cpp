@@ -14,14 +14,11 @@
  * стандартной библиотеки и нужно следовать принципам инкапсуляции.
  */
 
-
-#include "libs.h" 
-#include "my_string/my_string.h"
+#include "libs.h"
+#include "BaseFile.h"
 
 int main() {
-
-	std::cout << "---- 2-ая лабораторная ----" << std::endl;
-
+	std::cout << "Hello World!" << std::endl;
     /**
      * Задание 1. Массивы объектов класса.
      */
@@ -33,13 +30,9 @@ int main() {
      * Выведите элементы массива на консоль.
      */
 
-    {
-		int size = 5;
-        MyString ar[size] = {MyString("Hello"), MyString("World"), MyString("!")};
-
-		for (int i = 0; i < size; ++i)
-			ar[i].print();
-    }
+    /* {
+        MyString ar[3] = { ... };
+    } */
 
     /**
      * Замените размер массива с 3 на 5, не меняя список инициализаторов.
@@ -83,7 +76,7 @@ int main() {
      * - size_t read_raw(void *buf, size_t max_bytes) - читает доступные данные
      *   в буфер, но не более указанного количества и возвращает количество
      *   байт, которое удалось считать;
-      - long tell() - возвращает текущий сдвиг файла (см. функцию ftell);
+     * - long tell() - возвращает текущий сдвиг файла (см. функцию ftell);
      * - bool seek(long offset) - устанавливает сдвиг файла (см. функцию fseek)
      *   и возвращает true, если операция успешна.
      *
@@ -349,5 +342,5 @@ int main() {
 
     }
 
-    return 0;
+  	return 0;
 }
