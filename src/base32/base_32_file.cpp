@@ -12,6 +12,18 @@ const char default_alphabet[32] = {
 Base32File::Base32File(const char* path, const char* mode, const char* alphabet)
     : BaseFile(path, mode), alphabet(alphabet) {}
 
+/*
+class INT {
+	INT(const char*);
+}
+
+class IR : INT {
+	IR(const char* int, const char *ir) : INT(int) {
+		...
+	}
+}
+*/
+
 //кодирует данные перед записью
 size_t Base32File::write(const void* raw_buf, size_t n_bytes) {
     if (!can_write()) return 0;

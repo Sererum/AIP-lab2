@@ -19,10 +19,40 @@
 #include "base32/base_32_file.h"
 #include "my_string/my_string.h"
 
+class A {
+public:
+	int a = 1;
+	char *str;
+
+	A() {
+		std::cout << "Constr A" << std::endl;
+	}
+};
+
+class B: public A {
+public:
+	int b = 2;
+
+	B(): A() {
+		std::cout << "Constr B" << std::endl;
+	}
+};
+
+class C: public B {
+public:
+	int c = 3;
+	char *str = new char[10];
+
+	C() {
+		std::cout << "Const C" << std::endl;
+	}
+};
+
 int main() {
 
-
 	std::cout << "------ Лабороторная 2 ------" << std::endl; 
+
+
 
     /**
      * Задание 1. Массивы объектов класса.
@@ -139,11 +169,10 @@ int main() {
 		char buffer[size];
 
 		if (file.is_open() && file.can_read()) {
-			while (file.read_raw(buffer, size) > 0) {
+			while (file.read(buffer, size) > 0) {
 				std::cout << buffer;
 			}
 		}	
-
 	}
 
     /**
@@ -185,7 +214,7 @@ int main() {
 		std::cout << "------ Задание 2.2.1 ------" << std::endl; 
 
 		// const char* source = "Hello, world! My name is Nastya";
-		const char* source = "1";
+		const char* source = "abc";
 		const char *file_name = "build/temp32.txt";
 
 		Base32File write_file(file_name, "w");
@@ -223,6 +252,12 @@ int main() {
      * получилось ли добиться уменьшения размера хранимых данных.
      */
 
+	// AAAAAAAAAAAAADDDDFFFAFFDD
+	// 210A4D3FA2F2D
+	// int = 210;
+	// char = "A";
+	// char* = "A" * 210;
+
     /**
      * Задание 2.3. Конструкторы и деструкторы базового и производного классов.
      *
@@ -247,9 +282,18 @@ int main() {
         RleFile rf(...);
 
         int n = 123456;
-        if (n < 0) { bf.write(...); }
+        if (n < 0) { bf.write("-"); }
+
+		m = 0
+		while (n < m * 10)
+			m *= 10	
+
+		m = 100000
+
         while (n > 0) {
-            bf.write(...);
+			
+            bf.write(str(n/m));
+			m /= 10;
             // ...
         }
 
@@ -310,14 +354,16 @@ int main() {
 
     /* {
         BaseFile *files[] = { 
-            new BaseFile(...), 
-            new RleFile(...), 
-            new Base32File(...), 
+            (BaseFile *) new BaseFile(...), 
+            (BaseFile *) new RleFile(...), 
+            (BaseFile *) new Base32File(...), 
         };
 
         for (int i = 0; i < 3; ++i) {
             files[i]->write("Hello!", 6);
         }
+
+		delete[] files;
     } */
 
     /**
