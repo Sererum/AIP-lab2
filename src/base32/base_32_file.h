@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseFile.h" // Включаем базовый класс
+#include "base_file.h" // Включаем базовый класс
 #include "libs.h"
 
 // Таблица кодировки по умолчанию (из lab4)

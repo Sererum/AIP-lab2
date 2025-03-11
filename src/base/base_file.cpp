@@ -1,4 +1,4 @@
-#include "BaseFile.h"
+#include "base_file.h"
 
 BaseFile::BaseFile() 
     : file(nullptr), owns_file(false), mode(nullptr) {}
@@ -42,8 +42,19 @@ size_t BaseFile::write_raw(const void* buf, size_t n_bytes) {
 }
 
 size_t BaseFile::read_raw(void* buf, size_t max_bytes) {
-    if (!is_open() || !can_read()) return 0;
-    return std::fread(buf, 1, max_bytes, file);
+	if (!is_open() || !can_read()) {
+        std::cerr << "Ошибка: файл не открыт или недоступен для чтения." << std::endl;
+        return 0;
+    }
+
+    size_t bytes_read = std::fread(buf, 1, max_bytes, file);
+	static_cast<char*>(buf)[bytes_read] = '\0';
+    
+    if (bytes_read == 0 && std::ferror(file)) {
+        std::cerr << "Ошибка: сбой при чтении файла!" << std::endl;
+    }
+
+	return bytes_read;
 }
 
 long BaseFile::tell() const {
@@ -54,6 +65,16 @@ long BaseFile::tell() const {
 bool BaseFile::seek(long offset) {
     if (!is_open()) return false;
     return std::fseek(file, offset, SEEK_SET) == 0;
+}
+
+bool BaseFile::close() {
+    if (owns_file && file) {
+        std::fclose(file);
+		owns_file = false;
+		file = nullptr;
+		return true;
+    }
+	return false;
 }
 
 void TextFile::write_line(const char* line) {

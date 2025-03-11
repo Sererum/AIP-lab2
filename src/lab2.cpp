@@ -15,10 +15,14 @@
  */
 
 #include "libs.h"
-#include "BaseFile.h"
+#include "base/base_file.h"
+#include "my_string/my_string.h"
 
 int main() {
-	std::cout << "Hello World!" << std::endl;
+
+
+	std::cout << "------ Лабороторная 2 ------" << std::endl; 
+
     /**
      * Задание 1. Массивы объектов класса.
      */
@@ -30,9 +34,14 @@ int main() {
      * Выведите элементы массива на консоль.
      */
 
-    /* {
-        MyString ar[3] = { ... };
-    } */
+    {
+		std::cout << "------ Задание 1.1 ------" << std::endl; 
+		int size = 5;
+        MyString ar[size] = {MyString("Hello"), MyString("World"), MyString("!")};
+		
+		for (int i = 0; i < size; ++i)
+			ar[i].print();
+    }
 
     /**
      * Замените размер массива с 3 на 5, не меняя список инициализаторов.
@@ -47,6 +56,15 @@ int main() {
      * Объявите и проинициализируйте массив arPtr из трех указателей на объекты
      * типа MyString. Выведите элементы массива на консоль.
      */
+
+    {
+		std::cout << "------ Задание 1.2 ------" << std::endl; 
+		int size = 3;
+        MyString *ar[size] = {new MyString("Hello"), new MyString("World"), new MyString("!")};
+		
+		for (int i = 0; i < size; ++i)
+			ar[i]->print();
+    }
 
     /**
      * Задание 2. Простое наследование. Аргументы конструктора, передаваемые в
@@ -86,6 +104,46 @@ int main() {
      *
      * Проверьте работу этого класса.
      */
+	{
+		std::cout << "------ Задание 2.1 (часть 1) ------" << std::endl; 
+
+		const char* source = "Hello, world! My name is Nastya";
+		const char *file_name = "build/temp.txt";
+
+		BaseFile write_file(file_name, "w");
+		char buffer[256];
+
+		int len_source = strlen(source);
+		strcpy(buffer, source);
+
+		write_file.write(buffer, len_source);
+		write_file.close();
+
+		std::cout << "Write in file text: " << source << std::endl;
+
+		BaseFile read_file(file_name, "r");
+		char buffer2[256];
+
+		read_file.read(buffer2, len_source);
+		std::cout << "Readed text: " <<  buffer2 << std::endl; 
+	}
+	
+	{
+		std::cout << "------ Задание 2.1 (вывод задания) ------" << std::endl; 
+
+		const char* file_name = "build/test_text.txt";
+		BaseFile file(file_name, "r");
+
+		const int size = 10;
+		char buffer[size];
+
+		if (file.is_open() && file.can_read()) {
+			while (file.read_raw(buffer, size) > 0) {
+				std::cout << buffer;
+			}
+		}	
+
+	}
 
     /**
      * Задание 2.2. Производные классы.
@@ -342,5 +400,5 @@ int main() {
 
     }
 
-  	return 0;
+    return 0;
 }
