@@ -15,8 +15,8 @@
  */
 
 #include "libs.h"
-#include "base/base_file.h"
-#include "base32/base_32_file.h"
+#include "base_file/base_file.h"
+#include "file32/file32.h"
 #include "my_string/my_string.h"
 
 class A {

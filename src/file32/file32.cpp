@@ -1,4 +1,4 @@
-#include "base_32_file.h"
+#include "file32.h"
 
 // из lab4
 const char default_alphabet[32] = {
