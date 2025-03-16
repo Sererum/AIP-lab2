@@ -17,42 +17,14 @@
 #include "libs.h"
 #include "base_file/base_file.h"
 #include "file32/file32.h"
+#include "rle_file/rle_file.h"
 #include "my_string/my_string.h"
 
-class A {
-public:
-	int a = 1;
-	char *str;
-
-	A() {
-		std::cout << "Constr A" << std::endl;
-	}
-};
-
-class B: public A {
-public:
-	int b = 2;
-
-	B(): A() {
-		std::cout << "Constr B" << std::endl;
-	}
-};
-
-class C: public B {
-public:
-	int c = 3;
-	char *str = new char[10];
-
-	C() {
-		std::cout << "Const C" << std::endl;
-	}
-};
+#define BUFFER_SIZE 256
 
 int main() {
 
 	std::cout << "------ Лабороторная 2 ------" << std::endl; 
-
-
 
     /**
      * Задание 1. Массивы объектов класса.
@@ -66,7 +38,7 @@ int main() {
      */
 
     {
-		std::cout << "------ Задание 1.1 ------" << std::endl; 
+		std::cout << "\n------ Задание 1.1 ------" << std::endl; 
 		int size = 5;
         MyString ar[size] = {MyString("Hello"), MyString("World"), MyString("!")};
 		
@@ -89,12 +61,15 @@ int main() {
      */
 
     {
-		std::cout << "------ Задание 1.2 ------" << std::endl; 
+		std::cout << "\n------ Задание 1.2 ------" << std::endl; 
 		int size = 3;
         MyString *ar[size] = {new MyString("Hello"), new MyString("World"), new MyString("!")};
 		
 		for (int i = 0; i < size; ++i)
 			ar[i]->print();
+
+		for (int i = 0; i < size; ++i)
+			delete ar[i];
     }
 
     /**
@@ -136,33 +111,35 @@ int main() {
      * Проверьте работу этого класса.
      */
 	{
-		std::cout << "------ Задание 2.1 (часть 1) ------" << std::endl; 
+		std::cout << "\n------ Задание 2.1 (часть 1) ------" << std::endl; 
 
 		const char* source = "Hello, world! My name is Nastya";
-		const char *file_name = "build/temp.txt";
+		const char *file_name = "build/files/task 2.1 (1).txt";
+		char buffer[BUFFER_SIZE];
 
 		BaseFile write_file(file_name, "w");
-		char buffer[256];
 
-		int len_source = strlen(source);
-		strcpy(buffer, source);
+		for (int i = 0; i < BUFFER_SIZE; ++i) 
+			buffer[i] = 0;
 
-		write_file.write(buffer, len_source);
+		write_file.write(source, std::strlen(source));
 		write_file.close();
 
-		std::cout << "Write in file text: " << source << std::endl;
+		std::cout << "Записанные в файл данные: " << source << std::endl;
 
 		BaseFile read_file(file_name, "r");
-		char buffer2[256];
 
-		read_file.read(buffer2, len_source);
-		std::cout << "Readed text: " <<  buffer2 << std::endl; 
+		for (int i = 0; i < BUFFER_SIZE; ++i) 
+			buffer[i] = 0;
+
+		read_file.read(buffer, BUFFER_SIZE);
+		std::cout << "Считанные из файла данные: " <<  buffer << std::endl; 
 	}
 	
 	{
-		std::cout << "------ Задание 2.1 (вывод задания) ------" << std::endl; 
+		std::cout << "\n------ Задание 2.1 (часть 2) ------" << std::endl; 
 
-		const char* file_name = "build/test_text.txt";
+		const char* file_name = "build/files/task 2.1 (2).txt";
 		BaseFile file(file_name, "r");
 
 		const int size = 10;
@@ -211,28 +188,39 @@ int main() {
      */
 
 	{
-		std::cout << "------ Задание 2.2.1 ------" << std::endl; 
+		std::cout << "\n------ Задание 2.2.1 ------" << std::endl; 
 
-		// const char* source = "Hello, world! My name is Nastya";
-		const char* source = "abc";
-		const char *file_name = "build/temp32.txt";
+		const char* source = "Hello, world! My name is Nastya";
+		const char *file_name = "build/files/task 2.2.1.txt";
+		char buffer[BUFFER_SIZE];
 
 		Base32File write_file(file_name, "w");
-		char buffer[256];
 
-		int len_source = strlen(source);
-		strcpy(buffer, source);
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
 
-		write_file.write(buffer, len_source);
+		write_file.write(source, std::strlen(source));
 		write_file.close();
 
-		std::cout << "Write in file text: " << source << std::endl;
+		std::cout << "Запись в файл: " << source << std::endl;
+
+		BaseFile base_read(file_name, "r");
+
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+    	base_read.read(buffer, BUFFER_SIZE);
+    	base_read.close();
+    
+    	std::cout << "'Сырые' данные: " << buffer << std::endl;
 
 		Base32File read_file(file_name, "r");
-		char buffer2[256];
 
-		read_file.read(buffer2, len_source);
-		std::cout << "Readed text: " <<  buffer2 << std::endl; 
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+		read_file.read(buffer, std::strlen(source));
+		std::cout << "Дешифрованные данные: " <<  buffer << std::endl; 
 	}
 	
     /**
@@ -252,11 +240,47 @@ int main() {
      * получилось ли добиться уменьшения размера хранимых данных.
      */
 
-	// AAAAAAAAAAAAADDDDFFFAFFDD
-	// 210A4D3FA2F2D
-	// int = 210;
-	// char = "A";
-	// char* = "A" * 210;
+	{
+		std::cout << "\n------ Задание 2.2.1 ------" << std::endl; 
+
+		int source_size = 256 * 2; 
+
+		char source[source_size];
+		for (int i = 0; i < source_size; ++i)
+			source[i] = 0;
+
+		BaseFile source_file("build/files/task 2.1 (2).txt", "r");
+		source_file.read(source, source_size);
+		source_file.close();
+		
+    	const char* file_name = "build/files/task 2.2.1.txt";
+    	char buffer[source_size];
+
+		RleFile rle_write(file_name, "w");
+		std::cout << "Возмьмем файл из задания 2.1 (2): \n" << source << std::endl;
+    	rle_write.write(source, strlen(source));
+    	rle_write.close();
+
+		BaseFile base_read(file_name, "r");
+
+		for (int i = 0; i < source_size; ++i)
+			buffer[i] = 0;
+
+    	base_read.read(buffer, BUFFER_SIZE);
+    	base_read.close();
+    
+    	std::cout << "'Сырые' данные: \n" << buffer << std::endl;
+
+		RleFile rle_read(file_name, "r");
+
+		for (int i = 0; i < source_size; ++i)
+			buffer[i] = 0;
+
+    	rle_read.read(buffer, source_size);
+    	rle_read.close();
+    
+    	std::cout << "Распакованные данные: \n" << buffer << std::endl;
+	}
 
     /**
      * Задание 2.3. Конструкторы и деструкторы базового и производного классов.
@@ -276,24 +300,18 @@ int main() {
      * запись.
      */
 
-    /* {
-        BaseFile bf(...);
-        Base32File b32f(...);
-        RleFile rf(...);
+    {
+		std::cout << "\n------ Задание 2.4 ------" << std::endl; 
 
-        int n = 123456;
-        if (n < 0) { bf.write("-"); }
+        BaseFile bf("build/files/task 2.4 (1).txt", "w");
+        Base32File b32f("build/files/task 2.4 (2).txt", "w");
+        RleFile rf("build/files/task 2.4 (3).txt", "w");
 
-		m = 0
-		while (n < m * 10)
-			m *= 10	
-
-		m = 100000
+        /*int n = 123456;
+        if (n < 0) { bf.write(...); }
 
         while (n > 0) {
-			
-            bf.write(str(n/m));
-			m /= 10;
+            b32f.write(...);
             // ...
         }
 
@@ -309,8 +327,8 @@ int main() {
         while (n > 0) {
             rf.write(...);
             // ...
-        }
-    } */
+        }*/
+    }
 
     /**
      * Задание 2.5. Передача объекта по ссылке / указателю.
@@ -352,19 +370,21 @@ int main() {
      * Исправьте эту ситуацию.
      */
 
-    /* {
-        BaseFile *files[] = { 
-            (BaseFile *) new BaseFile(...), 
-            (BaseFile *) new RleFile(...), 
-            (BaseFile *) new Base32File(...), 
+    { 
+		BaseFile *files[] = { 
+			(BaseFile *) new BaseFile("build/files/task 2.7 (1).txt", "w+"), 
+            (BaseFile *) new RleFile("build/files/task 2.7 (2).txt", "w+"), 
+            (BaseFile *) new Base32File("build/files/task 2.7 (3).txt", "w+"), 
         };
 
         for (int i = 0; i < 3; ++i) {
             files[i]->write("Hello!", 6);
         }
 
-		delete[] files;
-    } */
+		for (int i = 0; i < 3; ++i) {
+			delete files[i];
+		}
+    }
 
     /**
      * Задание 2.8. Массив объектов производных классов.
@@ -379,16 +399,19 @@ int main() {
      * логику, используя массив указателей на объекты базового класса.
      */
 
-    /* {
-        BaseFile *base_files = new BaseFile[2] { BaseFile(...), BaseFile(...) };
-        BaseFile *b32_files = new Base32File[2] { Base32File(...), Base32File(...) };
+    {
+        BaseFile *base_files = new BaseFile[2] { BaseFile("build/files/task 2.8 (1).txt", "w"), BaseFile("build/files/task 2.8 (2).txt", "w") };
+        // BaseFile *b32_files = new Base32File[2] { Base32File("...", "w"), Base32File("...", "w") };
+
         for (int i = 0; i < 2; ++i) {
             base_files[i].write("Hello!", 6);
-            b32_files[i].write("Hello!", 6);
+            //b32_files[i].write("Hello!", 6);
         }
         delete [] base_files;
-        delete [] b32_files;
-    } */
+        //delete [] b32_files;
+	}
+	// Коммент
+	//
 
     /**
      * Задание 3. Чисто виртуальные функции. Интерфейсы. Композиция классов.
@@ -453,12 +476,54 @@ int main() {
      * классов `Base32File` и `RleFile`.
      */
 
-    /* {
-        Base32File2 b32f(new BaseFile(...));
-        RleFile2 rf(new Base32File(...));
-        write_int(b32f, 123456);
-        write_int(rf, 123456);
-    } */
+    /*{
+		std::cout << "\n------ Задание 3.2 ------" << std::endl; 
+
+		int n = 123456;
+
+        Base32File2 b32f(new BaseFile("build/files/task 3.2 (1).txt", "w"));
+        RleFile2 rf(new Base32File("build/files/task 3.2 (2).txt", "w"));
+        write_int(b32f, n);
+        write_int(rf, n);
+
+		b32f.close();
+		rf.close();
+
+		char buffer[BUFFER_SIZE];
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+		BaseFile file_read1("build/files/task 3.2 (1).txt", "r");
+		BaseFile file_read2("build/files/task 3.2 (2).txt", "r");
+
+		file_read1.read(buffer, BUFFER_SIZE);
+		file_read1.close();
+		std::cout << "'Сырая' запись числа " << n << " в Base32File2 -> BaseFile: " << buffer << std::endl;
+
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+		file_read2.read(buffer, BUFFER_SIZE);
+		file_read2.close();
+		std::cout << "'Сырая' запись числа " << n << " в RleFile2 -> Base32File: " << buffer << std::endl;
+
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+        Base32File2 b32f_read(new BaseFile("build/files/task 3.2 (1).txt", "r"));
+        RleFile2 rf_read(new Base32File("build/files/task 3.2 (2).txt", "r"));
+
+		b32f_read.read(buffer, BUFFER_SIZE);
+		b32f_read.close();
+		std::cout << "Считанное число " << n << " из Base32File2 -> BaseFile: " << buffer << std::endl;
+
+		for (int i = 0; i < BUFFER_SIZE; ++i)
+			buffer[i] = 0;
+
+		rf_read.fread(buffer, BUFFER_SIZE);
+		rf_read.close();
+		std::cout << "Считанное число" << n << " из RleFile2 -> Base32File: " << buffer << std::endl;
+    }*/
 
     /**
      * Задание 3.3. Больше композиции!
