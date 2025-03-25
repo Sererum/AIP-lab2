@@ -17,10 +17,31 @@
 #include "libs.h"
 #include "base_file/base_file.h"
 #include "file32/file32.h"
+#include "file32/file32_2.h"
 #include "rle_file/rle_file.h"
+#include "rle_file/rle_file_2.h"
 #include "my_string/my_string.h"
 
 #define BUFFER_SIZE 256
+
+void write_int(IFile *file, int n) {
+    if (n < 0) {
+        char minus = '-';
+        file->write(&minus, 1); 
+        n = -n; 
+    }
+
+    char buffer[20];
+    int index = 0;
+    do {
+        buffer[index++] = '0' + (n % 10);
+        n /= 10;
+    } while (n > 0);
+
+    while (index > 0) {
+        file->write(&buffer[--index], 1);
+    }
+}
 
 int main() {
 
@@ -476,15 +497,15 @@ int main() {
      * классов `Base32File` и `RleFile`.
      */
 
-    /*{
+    {
 		std::cout << "\n------ Задание 3.2 ------" << std::endl; 
 
 		int n = 123456;
 
         Base32File2 b32f(new BaseFile("build/files/task 3.2 (1).txt", "w"));
         RleFile2 rf(new Base32File("build/files/task 3.2 (2).txt", "w"));
-        write_int(b32f, n);
-        write_int(rf, n);
+        write_int(&b32f, n);
+        write_int(&rf, n);
 
 		b32f.close();
 		rf.close();
@@ -520,10 +541,10 @@ int main() {
 		for (int i = 0; i < BUFFER_SIZE; ++i)
 			buffer[i] = 0;
 
-		rf_read.fread(buffer, BUFFER_SIZE);
+		rf_read.read(buffer, BUFFER_SIZE);
 		rf_read.close();
-		std::cout << "Считанное число" << n << " из RleFile2 -> Base32File: " << buffer << std::endl;
-    }*/
+		std::cout << "Считанное число " << n << " из RleFile2 -> Base32File: " << buffer << std::endl;
+    }
 
     /**
      * Задание 3.3. Больше композиции!

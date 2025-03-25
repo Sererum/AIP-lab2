@@ -5,12 +5,12 @@
 
 class BaseFile : public IFile {
 public:
-    BaseFile(); 
+    BaseFile();	 
     BaseFile(const char* path, const char* mode); 
     explicit BaseFile(FILE* f);  
     ~BaseFile();
 
-    bool is_open() const;
+    bool is_open() const override;
     bool can_read() const override;
     bool can_write() const override;
     size_t write_raw(const void* buf, size_t n_bytes);
