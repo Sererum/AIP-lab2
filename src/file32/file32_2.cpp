@@ -2,12 +2,12 @@
 
 Base32File2::Base32File2(IFile* ifile, const char* alphabet)
     : file(ifile), alphabet(alphabet) {
-    std::cout << "Base32File2 Constructor" << std::endl;
+    //std::cout << "Base32File2 Constructor" << std::endl;
 }
 
 Base32File2::~Base32File2() {
     delete file; // Освобождение памяти
-    std::cout << "Base32File2 Destructor" << std::endl;
+    //std::cout << "Base32File2 Destructor" << std::endl;
 }
 
 bool Base32File2::is_open() const {
@@ -49,6 +49,7 @@ size_t Base32File2::read(void* dst_buf, size_t max_bytes) {
 
     size_t copied = std::min(decoded_size, (int)max_bytes);
     std::memcpy(dst_buf, decoded_buf, copied);
+    static_cast<char*>(dst_buf)[copied] = '\0'; 
 
     delete[] encoded_buf;
     delete[] decoded_buf;

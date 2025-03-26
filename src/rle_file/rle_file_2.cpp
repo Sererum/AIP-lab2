@@ -1,12 +1,12 @@
 #include "rle_file_2.h"
 
 RleFile2::RleFile2(IFile* ifile) : file(ifile) {
-    std::cout << "RleFile2 Constructor" << std::endl;
+    //std::cout << "RleFile2 Constructor" << std::endl;
 }
 
 RleFile2::~RleFile2() {
     delete file;
-    std::cout << "RleFile2 Destructor" << std::endl;
+    //std::cout << "RleFile2 Destructor" << std::endl;
 }
 
 bool RleFile2::is_open() const {

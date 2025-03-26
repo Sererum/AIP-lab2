@@ -31,16 +31,26 @@ void write_int(IFile *file, int n) {
         n = -n; 
     }
 
-    char buffer[20];
+    char buffer[BUFFER_SIZE];
+	for (int i = 0; i < BUFFER_SIZE; ++i)
+		buffer[i] = 0;
+
     int index = 0;
     do {
         buffer[index++] = '0' + (n % 10);
         n /= 10;
     } while (n > 0);
 
+	char reverse[BUFFER_SIZE];
+	for (int i = 0; i < BUFFER_SIZE; ++i)
+		reverse[i] = 0;
+
+	int rev_index = 0;
+
     while (index > 0) {
-        file->write(&buffer[--index], 1);
+		reverse[rev_index++] = buffer[--index];
     }
+	file->write(reverse, rev_index);
 }
 
 int main() {
@@ -328,27 +338,38 @@ int main() {
         Base32File b32f("build/files/task 2.4 (2).txt", "w");
         RleFile rf("build/files/task 2.4 (3).txt", "w");
 
-        /*int n = 123456;
-        if (n < 0) { bf.write(...); }
-
+        int n = 123456;
+        if (n < 0) { 
+            char minus = '-'; 
+            bf.write(&minus, 1); 
+        }
         while (n > 0) {
-            b32f.write(...);
-            // ...
+            char digit = '0' + (n % 10); // Преобразуем цифру в символ
+            bf.write(&digit, 1);         // Записываем цифру в файл
+            n /= 10;                     // Переходим к следующей цифре
+        }
+
+         n = 123456;
+        if (n < 0) { 
+            char minus = '-'; 
+            b32f.write(&minus, 1); // Записываем знак минус для отрицательного числа
+        }
+        while (n > 0) {
+            char digit = '0' + (n % 10); 
+            b32f.write(&digit, 1);     
+            n /= 10;                  
         }
 
         n = 123456;
-        if (n < 0) { b32f.write(...); }
-        while (n > 0) {
-            b32f.write(...);
-            // ...
+        if (n < 0) { 
+            char minus = '-'; 
+            rf.write(&minus, 1); 
         }
-
-        n = 123456;
-        if (n < 0) { rf.write(...); }
         while (n > 0) {
-            rf.write(...);
-            // ...
-        }*/
+            char digit = '0' + (n % 10); 
+            rf.write(&digit, 1);      
+            n /= 10;               
+        }
     }
 
     /**
@@ -555,7 +576,22 @@ int main() {
      */
 
     {
+		std::cout << "\n------ Задание 3.3 ------" << std::endl;
 
+		int n = 123456;
+
+		// Создаем цепочку композиции: BaseFile -> Base32File2 -> Base32File2 -> RleFile2
+		IFile* base_file = new BaseFile("build/files/task 3.3.txt", "w");
+		IFile* first_base32 = new Base32File2(base_file);
+		IFile* second_base32 = new Base32File2(first_base32);
+		IFile* rle_file = new RleFile2(second_base32);
+
+		write_int(rle_file, n);
+
+		rle_file->close();
+		delete rle_file; 
+
+		std::cout << "Число записано с двойным кодированием Base32 и сжатием RLE." << std::endl;
     }
 
     return 0;
